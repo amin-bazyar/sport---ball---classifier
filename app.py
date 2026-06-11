@@ -7,7 +7,6 @@ from PIL import Image
 import gdown
 import os
 
-# Classes
 CLASS_NAMES = [
     'american_football', 'baseball', 'basketball', 'billiard_ball',
     'bowling_ball', 'cricket_ball', 'football', 'golf_ball',
@@ -15,10 +14,9 @@ CLASS_NAMES = [
     'table_tennis_ball', 'tennis_ball', 'volleyball'
 ]
 
-MODEL_PATH = 'best_model.pth'
-FILE_ID = '1FgJz4uGtusj_2bazxP_hs_BjQ1o9vdup'
+MODEL_PATH = 'efficientnet_sports.pth'
+FILE_ID = '1k0vO-yssZmIr9uESagq1f4x-MAs5O7IZ'
 
-# Load model
 @st.cache_resource
 def load_model():
     if not os.path.exists(MODEL_PATH):
@@ -26,17 +24,14 @@ def load_model():
         gdown.download(url, MODEL_PATH, quiet=False)
 
     model = efficientnet_b3(weights=EfficientNet_B3_Weights.IMAGENET1K_V1)
-
-    in_features = model.classifier[1].in_features
-    model.classifier[1] = nn.Linear(in_features, 15)
+    model.classifier[1] = nn.Linear(model.classifier[1].in_features, 15)
 
     state_dict = torch.load(MODEL_PATH, map_location='cpu')
-    model.load_state_dict(state_dict,strict=False)
+    model.load_state_dict(state_dict, strict=True)
 
     model.eval()
     return model
 
-# Image transform
 transform = transforms.Compose([
     transforms.Resize((300, 300)),
     transforms.ToTensor(),
@@ -44,9 +39,7 @@ transform = transforms.Compose([
                          [0.229, 0.224, 0.225])
 ])
 
-# UI
 st.set_page_config(page_title="Sports Ball Classifier", layout="wide")
-
 st.title("Sports Ball Classifier")
 st.write("Upload an image to identify the type of sports ball")
 
@@ -69,7 +62,6 @@ if uploaded_file is not None:
             probs = torch.softmax(outputs, dim=1)[0]
 
     top5 = torch.topk(probs, 5)
-
     top1_idx = top5.indices[0].item()
     top1_prob = top5.values[0].item()
 
@@ -86,10 +78,8 @@ if uploaded_file is not None:
             st.error("Low confidence")
 
     st.subheader("Top Predictions")
-
     for i in range(5):
         idx = top5.indices[i].item()
         prob = top5.values[i].item()
-
         st.write(CLASS_NAMES[idx])
         st.progress(float(prob))
