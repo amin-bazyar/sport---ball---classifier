@@ -1,8 +1,11 @@
+
 import streamlit as st
 import torch
 from torchvision import transforms
 from PIL import Image
 from efficientnet_pytorch import EfficientNet
+import gdown
+import os
 
 CLASS_NAMES = [
     'american_football', 'baseball', 'basketball', 'billiard_ball',
@@ -11,10 +14,16 @@ CLASS_NAMES = [
     'tennis_ball', 'volleyball', 'frisbee'
 ]
 
+MODEL_PATH = 'best_model.pth'
+FILE_ID = '1FgJz4uGtusj_2bazxP_hs_BjQ1o9vdup'
+
 @st.cache_resource
 def load_model():
+    if not os.path.exists(MODEL_PATH):
+        url = f'https://drive.google.com/uc?id={FILE_ID}'
+        gdown.download(url, MODEL_PATH, quiet=False)
     model = EfficientNet.from_pretrained('efficientnet-b3', num_classes=15)
-    model.load_state_dict(torch.load('best_model.pth', map_location='cpu'))
+    model.load_state_dict(torch.load(MODEL_PATH, map_location='cpu'))
     model.eval()
     return model
 
