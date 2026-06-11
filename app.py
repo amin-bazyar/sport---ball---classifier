@@ -31,7 +31,7 @@ def load_model():
     model.classifier[1] = nn.Linear(in_features, 15)
 
     state_dict = torch.load(MODEL_PATH, map_location='cpu')
-    model.load_state_dict(state_dict)
+    model.load_state_dict(state_dict,strict=False)
 
     model.eval()
     return model
