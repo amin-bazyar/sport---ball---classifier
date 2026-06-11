@@ -26,9 +26,13 @@ def load_model():
         gdown.download(url, MODEL_PATH, quiet=False)
 
     model = efficientnet_b3(weights=EfficientNet_B3_Weights.IMAGENET1K_V1)
-    model.classifier[1] = nn.Linear(1536, 15)
 
-    model.load_state_dict(torch.load(MODEL_PATH, map_location='cpu'))
+    in_features = model.classifier[1].in_features
+    model.classifier[1] = nn.Linear(in_features, 15)
+
+    state_dict = torch.load(MODEL_PATH, map_location='cpu')
+    model.load_state_dict(state_dict)
+
     model.eval()
     return model
 
