@@ -11,8 +11,8 @@ import os
 CLASS_NAMES = [
     'american_football', 'baseball', 'basketball', 'billiard_ball',
     'bowling_ball', 'cricket_ball', 'football', 'golf_ball',
-    'hockey_puck', 'rugby_ball', 'shuttlecock', 'table_tennis_ball',
-    'tennis_ball', 'volleyball', 'frisbee'
+    'hockey_ball', 'hockey_puck', 'rugby_ball', 'shuttlecock',
+    'table_tennis_ball', 'tennis_ball', 'volleyball'
 ]
 
 MODEL_PATH = 'best_model.pth'
